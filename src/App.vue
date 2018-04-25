@@ -27,6 +27,8 @@ html {
 }
 body{
   background: #e2e1e0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 13px;
 }
 header{
   background: #F2514B;

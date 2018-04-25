@@ -14,18 +14,32 @@ export default {
   name: 'chatbox',
   data(){
     return {
-      question: "hola",
-      items: [{
-        message: "hola",
-        from: "me"
-      }, {
-        message: "mundo",
-        from: "bot"
-      }]
+      question: "",
+      items: []
     }
+  },
+  mounted(){
+    
   },
   methods: {
     formSubmit(){
+      fetch("http://localhost:8081/send", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          q: this.question
+        })
+      }).then(response => {
+        return response.json();
+      }).then(result => {
+        this.items.push({
+          message: result.current_response.message,
+          from: "bot"
+        });
+      });
       this.items.push({
         message: this.question,
         from: "me"
@@ -88,7 +102,6 @@ export default {
       &__input, &__button{
         display: inline-block;
         padding: 0.5rem 1rem;
-        font-size: 1rem;
       } 
       &__input{
         flex-grow: 4;
