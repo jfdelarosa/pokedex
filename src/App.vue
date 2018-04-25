@@ -1,28 +1,43 @@
-<template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
-  </div>
+<template lang="pug">
+  #app
+    header
+    .black
+    .container
+      chatbox
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import 'normalize.css';
+import chatbox from './components/chatbox'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    chatbox
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+body{
+  background: #e2e1e0;
+}
+header{
+  background: #F2514B;
+  height: 30vh;
+}
+.container{
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.black{
+  background: #272d2d;
+  height: 8vh;
 }
 </style>
