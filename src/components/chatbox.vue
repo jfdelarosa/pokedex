@@ -1,8 +1,12 @@
 <template lang="pug">
 .chatbox
   .chatbox__header hola
-  .chatbox__content mundo
-  .chatbox__footer que tal
+  ul.chatbox__content
+    li.chatbox__content__message(:class="item.from" v-for="item in items") {{item.message}}
+  .chatbox__footer
+    form(v-on:submit.prevent="formSubmit")
+      input.chatbox__footer__input(placeholder="Escribe una pregunta..." v-model="question")
+      button.chatbox__footer__button Enviar
 </template>
 
 <script>
@@ -10,7 +14,23 @@ export default {
   name: 'chatbox',
   data(){
     return {
-      msg: "hello world"
+      question: "hola",
+      items: [{
+        message: "hola",
+        from: "me"
+      }, {
+        message: "mundo",
+        from: "bot"
+      }]
+    }
+  },
+  methods: {
+    formSubmit(){
+      this.items.push({
+        message: this.question,
+        from: "me"
+      });
+      this.question = "";
     }
   }
 }
@@ -33,10 +53,56 @@ export default {
     }
     &__content{
       padding: 1rem;
+      overflow: auto;
+      transform: rotate(180deg);
+      direction: rtl;
+      list-style: none;
+      display: flex;
+      flex-direction: column-reverse;
+      &__message{
+        transform: rotate(180deg);
+        direction: ltr;
+        padding: 0.5rem 1rem;
+        margin-bottom: 0.5rem;
+        $radius: 6px;
+        &.me{
+          align-self: flex-end;
+          background: #69dc9e;
+          border-radius: $radius;
+          border-top-right-radius: 0;
+        }
+        &.bot{
+          align-self: flex-start;
+          background: #50d8d7;
+          border-radius: $radius;
+          border-top-left-radius: 0;
+        }
+      }
     }
     &__footer{
       padding: 1rem;
       border-top: 1px solid #eee;
+      form{
+        display: flex;
+      }
+      &__input, &__button{
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+      } 
+      &__input{
+        flex-grow: 4;
+        border-radius: 5px;
+        margin-right: 1rem;
+        border: 1px solid #c3c3c3;        
+      }
+      &__button{
+        flex-grow: 1;
+        border-radius: 5px;
+        color: white;
+        background: #2c9fdd;
+        border: none;
+      }
     }
   }
 </style>
