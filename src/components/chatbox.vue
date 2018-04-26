@@ -1,8 +1,9 @@
 <template lang="pug">
 .chatbox
   .chatbox__header hola
-  ul.chatbox__content
-    li.chatbox__content__message(:class="item.from" v-for="item in items") {{item.message}}
+  .chatbox__content
+    ul.chatbox__content__container
+      li.chatbox__content__message(:class="item.from" v-for="item in items") {{item.message}}
   .chatbox__footer
     form(v-on:submit.prevent="formSubmit")
       input.chatbox__footer__input(placeholder="Escribe una pregunta..." v-model="question")
@@ -23,23 +24,40 @@ export default {
   },
   methods: {
     formSubmit(){
-      fetch("http://localhost:8081/send", {
+      const base = "http://localhost:8081";
+      const headers = {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+      };
+      fetch(base + "/send", {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json, text/plain, */*',
-          'Content-Type': 'application/json'
-        },
+        headers: headers,
         body: JSON.stringify({
           q: this.question
         })
       }).then(response => {
         return response.json();
       }).then(result => {
+        const intent = result.current_response.intent_info.name;
+        const entities = result.current_response.parameters.entities;
+
         this.items.push({
-          message: result.current_response.message,
+          message: result.current_response.default_answer,
+          from: "bot"
+        });
+
+        //for (let i = 0; i < entities.length; i++) {
+          return fetch(base + "/pokeapi/" + intent + "/" + entities[0].name);
+        //}
+      }).then(response => {
+        return response.json();
+      }).then(result => {
+        this.items.push({
+          message: result.data,
           from: "bot"
         });
       });
+
       this.items.push({
         message: this.question,
         from: "me"
@@ -70,9 +88,11 @@ export default {
       overflow: auto;
       transform: rotate(180deg);
       direction: rtl;
-      list-style: none;
-      display: flex;
-      flex-direction: column-reverse;
+      &__container{
+        list-style: none;
+        display: flex;
+        flex-direction: column-reverse;
+      }
       &__message{
         transform: rotate(180deg);
         direction: ltr;
