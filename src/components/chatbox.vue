@@ -30,7 +30,7 @@ export default {
         from: "me"
       });
 
-      const base = "http://localhost:8081";
+      const base = "";
       const headers = {
         'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/json'
