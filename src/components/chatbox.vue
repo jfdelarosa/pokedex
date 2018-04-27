@@ -115,6 +115,7 @@ export default {
           border-top-right-radius: 0;
         }
         &.bot{
+          text-align: left;
           align-self: flex-start;
           background: #50d8d7;
           border-radius: $radius;
