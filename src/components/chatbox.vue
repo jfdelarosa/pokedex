@@ -7,7 +7,7 @@
       li.chatbox__content__message(:class="item.from" v-for="item in items") {{item.message}}
   .chatbox__footer
     form(v-on:submit.prevent="formSubmit")
-      input.chatbox__footer__input(placeholder="Escribe una pregunta..." v-model="question")
+      input.chatbox__footer__input(placeholder="Escribe una pregunta..." v-model="question" :disabled="disabled")
       button.chatbox__footer__button Enviar
 </template>
 
@@ -17,7 +17,8 @@ export default {
   data(){
     return {
       question: "",
-      items: []
+      items: [],
+      disabled: false
     }
   },
   mounted(){
@@ -29,6 +30,7 @@ export default {
         message: this.question,
         from: "me"
       });
+      this.disabled = true;
 
       const base = "";
       const headers = {
@@ -47,25 +49,34 @@ export default {
       }).then(result => {
         const intent = result.current_response.intent_info.name;
         const entities = result.current_response.parameters.entities;
+        let msg = "";
 
-        console.log(result);
+        if(result.current_response.default_answer = ""){
+          msg = "No tengo una respuesta para eso.";
+        }else{
+          msg = result.current_response.default_answer;
+        }
 
         this.items.push({
-          message: result.current_response.default_answer,
+          message: msg,
           from: "bot"
         });
+        this.disabled = false;
 
-        for (let i = 0; i < entities.length; i++) {
-          fetch(base + "/pokeapi/" + intent + "/" + entities[i].name)
-          .then(response => {
-            return response.json();
-          }).then(pokeajax => {
-            this.items.push({
-              message: result.current_response.messages[i].text + " " + pokeajax.data,
-              from: "bot"
+        if(entities.length > 0){
+          for (let i = 0; i < entities.length; i++) {
+            fetch(base + "/pokeapi/" + intent + "/" + entities[i].name)
+            .then(response => {
+              return response.json();
+            }).then(pokeajax => {
+              this.items.push({
+                message: result.current_response.messages[i].text + " " + pokeajax.data,
+                from: "bot"
+              });
             });
-          });
+          }
         }
+
       });
       this.question = "";
 
