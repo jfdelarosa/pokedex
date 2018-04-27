@@ -18,13 +18,6 @@ app.post('/send', (req, res) => {
   .catch(error => {
     console.log(error);
   });
-
-  // const ajax = http.get(url, resp => {
-  //   resp.on("data", data => {
-  //     res.send(data);
-  //   });
-  // });
-  // ajax.end();
 });
 
 app.get('/pokeapi/:intent/:pokemon', (req, res) => {
@@ -53,11 +46,11 @@ app.get('/pokeapi/:intent/:pokemon', (req, res) => {
       break;
       
       case "weight":
-        ret = data.weight;
+        ret = data.weight + ", ";
       break;
 
       case "height":
-        ret = data.height;
+        ret = data.height + ", ";
       break;
 
       case "types":
@@ -66,7 +59,7 @@ app.get('/pokeapi/:intent/:pokemon', (req, res) => {
         }
       break;
     }
-    ret.replace(/,\s*$/, "");
+    ret = ret.replace(/,\s*$/, "");
     res.send(JSON.stringify({"data": ret }));
   })
   .catch(error => {

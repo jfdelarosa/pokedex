@@ -1,6 +1,7 @@
 <template lang="pug">
 .chatbox
-  .chatbox__header hola
+  .chatbox__header
+    h2 Pokedex
   .chatbox__content
     ul.chatbox__content__container
       li.chatbox__content__message(:class="item.from" v-for="item in items") {{item.message}}
@@ -24,11 +25,17 @@ export default {
   },
   methods: {
     formSubmit(){
+      this.items.push({
+        message: this.question,
+        from: "me"
+      });
+
       const base = "http://localhost:8081";
       const headers = {
         'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/json'
       };
+
       fetch(base + "/send", {
         method: 'POST',
         headers: headers,
@@ -41,28 +48,27 @@ export default {
         const intent = result.current_response.intent_info.name;
         const entities = result.current_response.parameters.entities;
 
+        console.log(result);
+
         this.items.push({
           message: result.current_response.default_answer,
           from: "bot"
         });
 
-        //for (let i = 0; i < entities.length; i++) {
-          return fetch(base + "/pokeapi/" + intent + "/" + entities[0].name);
-        //}
-      }).then(response => {
-        return response.json();
-      }).then(result => {
-        this.items.push({
-          message: result.data,
-          from: "bot"
-        });
-      });
-
-      this.items.push({
-        message: this.question,
-        from: "me"
+        for (let i = 0; i < entities.length; i++) {
+          fetch(base + "/pokeapi/" + intent + "/" + entities[i].name)
+          .then(response => {
+            return response.json();
+          }).then(pokeajax => {
+            this.items.push({
+              message: result.current_response.messages[i].text + " " + pokeajax.data,
+              from: "bot"
+            });
+          });
+        }
       });
       this.question = "";
+
     }
   }
 }
@@ -82,6 +88,9 @@ export default {
     &__header{
       padding: 1rem;
       border-bottom: 1px solid #eee;
+      h2{
+        margin: 0;
+      }
     }
     &__content{
       padding: 1rem;
