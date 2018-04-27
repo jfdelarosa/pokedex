@@ -1,13 +1,18 @@
 const express = require('express');
+const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 const axios = require("axios");
 
-const app = express()
-app.use(morgan('combined'))
-app.use(bodyParser.json())
-app.use(cors())
+const app = express();
+app.use(morgan('combined'));
+app.use(bodyParser.json());
+app.use(cors());
+
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, "index.html"));
+})
 
 app.post('/send', (req, res) => {
   const url = "http://beta.soldai.com/bill-cipher/askquestion?question=" + req.body.q + "&session_id=1&key=da5eb745007afb9a195fe50744483d4cf436b9bf&log=1";
@@ -67,4 +72,4 @@ app.get('/pokeapi/:intent/:pokemon', (req, res) => {
   });
 });
 
-app.listen(process.env.PORT || 8081)
+app.listen(process.env.PORT || 8080);
