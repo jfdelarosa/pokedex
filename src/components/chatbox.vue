@@ -51,7 +51,7 @@ export default {
         const entities = result.current_response.parameters.entities;
         let msg = "";
 
-        if(result.current_response.default_answer = ""){
+        if(result.current_response.default_answer == ""){
           msg = "No tengo una respuesta para eso.";
         }else{
           msg = result.current_response.default_answer;
